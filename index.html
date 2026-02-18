@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consolidación — MCI Medellín</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde: #1a5c3a;
+    --verde-medio: #2d8c5a;
+    --verde-claro: #4db87a;
+    --dorado: #c9a84c;
+    --dorado-claro: #f0cc72;
+    --crema: #f5f0e8;
+    --oscuro: #0f2318;
+    --gris: #6b7c72;
+    --rojo: #c0392b;
+    --naranja: #e67e22;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--crema); color: var(--oscuro); min-height: 100vh; }
+
+  /* LOADING */
+  #loading {
+    position: fixed; inset: 0;
+    background: var(--verde);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 999;
+    transition: opacity 0.5s;
+  }
+  #loading.oculto { opacity: 0; pointer-events: none; }
+  .spinner {
+    width: 48px; height: 48px;
+    border: 4px solid rgba(255,255,255,0.2);
+    border-top-color: var(--dorado-claro);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 20px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #loading p { color: rgba(255,255,255,0.7); font-size: 14px; }
+
+  /* ERROR */
+  #error-msg {
+    display: none;
+    background: #fdecea;
+    border: 1px solid #e74c3c;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 20px 60px;
+    color: var(--rojo);
+    font-size: 14px;
+  }
+
+  header {
+    background: var(--verde);
+    padding: 48px 60px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; top: -60px; right: -60px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.12);
+  }
+  .header-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px; letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--dorado-claro); margin-bottom: 12px;
+  }
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 42px; font-weight: 800;
+    color: #fff; line-height: 1.1; max-width: 600px;
+  }
+  header h1 span { color: var(--dorado-claro); }
+  .header-meta {
+    margin-top: 16px;
+    color: rgba(255,255,255,0.6);
+    font-size: 14px;
+  }
+  .header-meta strong { color: rgba(255,255,255,0.9); }
+
+  main { padding: 48px 60px; max-width: 1200px; margin: 0 auto; }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--verde-medio); margin-bottom: 24px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-title::after {
+    content: ''; flex: 1;
+    height: 1px; background: rgba(45,140,90,0.2);
+  }
+
+  /* SELECTOR AÑO */
+  .year-tabs {
+    display: flex; gap: 8px; margin-bottom: 32px;
+  }
+  .year-tab {
+    padding: 8px 24px;
+    border-radius: 99px;
+    border: 2px solid var(--verde-medio);
+    background: transparent;
+    color: var(--verde-medio);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 14px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .year-tab.activo {
+    background: var(--verde);
+    color: #fff; border-color: var(--verde);
+  }
+
+  /* KPIs */
+  .kpi-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 16px; margin-bottom: 48px;
+  }
+  .kpi-card {
+    background: #fff; border-radius: 16px;
+    padding: 24px; border: 1px solid rgba(0,0,0,0.06);
+    position: relative; overflow: hidden;
+    transition: transform 0.2s;
+  }
+  .kpi-card:hover { transform: translateY(-3px); }
+  .kpi-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+  }
+  .kpi-card.verde::before { background: var(--verde-claro); }
+  .kpi-card.dorado::before { background: var(--dorado); }
+  .kpi-card.azul::before { background: #3498db; }
+  .kpi-card.rojo::before { background: var(--rojo); }
+  .kpi-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gris); margin-bottom: 10px; }
+  .kpi-valor { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; color: var(--oscuro); line-height: 1; }
+  .kpi-sub { margin-top: 8px; font-size: 13px; color: var(--gris); }
+
+  /* EMBUDO */
+  .embudo-card {
+    background: #fff; border-radius: 16px;
+    padding: 32px; border: 1px solid rgba(0,0,0,0.06);
+    margin-bottom: 48px;
+  }
+  .embudo-card h3 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 24px; }
+  .embudo-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .embudo-step {
+    text-align: center; padding: 20px;
+    border-radius: 12px; background: #fafafa;
+    position: relative;
+  }
+  .embudo-step-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px; font-weight: 800;
+  }
+  .embudo-step-pct {
+    font-size: 13px; color: var(--gris); margin-top: 4px;
+  }
+  .embudo-step-label {
+    font-size: 12px; font-weight: 600;
+    margin-top: 8px; color: var(--oscuro);
+  }
+  .embudo-step-bar {
+    height: 4px; border-radius: 99px;
+    margin-top: 12px; background: #eee;
+    overflow: hidden;
+  }
+  .embudo-step-bar-fill { height: 100%; border-radius: 99px; }
+
+  /* MENSUAL */
+  .chart-card {
+    background: #fff; border-radius: 16px;
+    padding: 32px; border: 1px solid rgba(0,0,0,0.06);
+    margin-bottom: 48px;
+  }
+  .chart-card h3 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 24px; }
+  .bars-chart { display: flex; align-items: flex-end; gap: 8px; height: 160px; }
+  .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; }
+  .bar-rect { width: 100%; border-radius: 4px 4px 0 0; min-height: 2px; position: relative; cursor: pointer; }
+  .bar-rect:hover::after {
+    content: attr(data-tip);
+    position: absolute; bottom: 105%; left: 50%; transform: translateX(-50%);
+    background: var(--oscuro); color: #fff;
+    padding: 4px 8px; border-radius: 6px;
+    font-size: 11px; white-space: nowrap; pointer-events: none;
+  }
+  .bar-mes { font-size: 10px; color: var(--gris); margin-top: 6px; }
+
+  /* TABLA */
+  .tabla-wrap {
+    background: #fff; border-radius: 16px;
+    overflow: hidden; border: 1px solid rgba(0,0,0,0.06);
+    margin-bottom: 48px;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th {
+    background: var(--verde); color: #fff;
+    padding: 14px 16px; text-align: left;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px; letter-spacing: 1px;
+    text-transform: uppercase; font-weight: 600;
+  }
+  tbody tr { border-bottom: 1px solid #f0f0f0; transition: background 0.15s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #fafaf8; }
+  tbody td { padding: 12px 16px; vertical-align: middle; }
+  .lider-nombre { font-weight: 500; }
+  .mini-bar-wrap { display: flex; align-items: center; gap: 8px; }
+  .mini-bar-bg { width: 70px; height: 6px; background: #f0f0f0; border-radius: 99px; overflow: hidden; flex-shrink: 0; }
+  .mini-bar { height: 100%; border-radius: 99px; }
+  .pill {
+    display: inline-block; padding: 3px 10px;
+    border-radius: 99px; font-size: 11px; font-weight: 600;
+  }
+  .pill-verde { background: #e8f5ee; color: var(--verde); }
+  .pill-amarillo { background: #fef9e7; color: #b7860b; }
+  .pill-rojo { background: #fdecea; color: var(--rojo); }
+
+  footer {
+    background: var(--oscuro); color: rgba(255,255,255,0.4);
+    text-align: center; padding: 24px; font-size: 12px;
+  }
+
+  @media (max-width: 768px) {
+    main { padding: 24px 16px; }
+    header { padding: 32px 16px; }
+    header h1 { font-size: 28px; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .embudo-steps { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading">
+  <div class="spinner"></div>
+  <p>Cargando datos desde Google Sheets…</p>
+</div>
+
+<div id="error-msg"></div>
+
+<header>
+  <div class="header-label">MCI Medellín Sede Central · Reuniones Domingo</div>
+  <h1>Evolución y efectividad<br>en <span>consolidación</span></h1>
+  <div class="header-meta">
+    Datos en vivo desde Google Sheets ·
+    Última actualización: <strong id="ultima-actualizacion">cargando…</strong>
+  </div>
+</header>
+
+<main>
+
+  <div class="year-tabs">
+    <button class="year-tab activo" onclick="cambiarAño(2025, this)">2025</button>
+    <button class="year-tab" onclick="cambiarAño(2024, this)">2024</button>
+    <button class="year-tab" onclick="cambiarAño('ambos', this)">Comparar</button>
+  </div>
+
+  <div class="section-title">Resumen general</div>
+  <div class="kpi-grid" id="kpiGrid"></div>
+
+  <div class="section-title">Embudo de consolidación</div>
+  <div class="embudo-card">
+    <h3 id="embudoTitulo"></h3>
+    <div class="embudo-steps" id="embudoSteps"></div>
+  </div>
+
+  <div class="section-title">Personas ganadas por mes</div>
+  <div class="chart-card">
+    <h3 id="chartTitulo">Distribución mensual</h3>
+    <div class="bars-chart" id="barChart"></div>
+  </div>
+
+  <div class="section-title">Desempeño por líder</div>
+  <div class="tabla-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Líder</th>
+          <th>Ganados</th>
+          <th>Llamadas %</th>
+          <th>Visitas %</th>
+          <th>En célula %</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody id="tablaBody"></tbody>
+    </table>
+  </div>
+
+</main>
+
+<footer>
+  Dashboard en vivo · MCI Medellín Sede Central · Datos desde Google Sheets
+</footer>
+
+<script>
+// ============================================================
+// ⚙️  CONFIGURACIÓN — CAMBIA ESTOS DOS VALORES
+// ============================================================
+const SHEET_ID  = '1F9PRi4vLl59iDoirf9nMMfuA36WvA5Et6psbulI03EE';           // El ID del documento de Sheets
+const API_KEY   = 'AIzaSyDhPN3O3vAHov5IteHzbih6Jru_qHSg63U';            // Tu clave de API de Google
+const SHEET_TAB = 'Registro Ganar Reuniones';   // Nombre exacto de la pestaña
+// ============================================================
+
+const MESES_NOMBRES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const EXCLUIR_LIDERES = [
+  'Vine por cuenta propia/No conozco a mi líder de 12',
+  'No conozco a mi líder de 12',
+  'Vine por cuenta propia',
+  'Vine de visita asisto a otra iglesia',
+  'VERIFICANDO INFO',
+  'Grupo anexo Pastores Leyva'
+];
+
+let datosGlobales = [];
+let añoActual = 2025;
+
+// ── FETCH ──────────────────────────────────────────────────
+async function cargarDatos() {
+  const range = encodeURIComponent(`${SHEET_TAB}!A:S`);
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`;
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || 'Error al conectar con Sheets');
+    }
+    const data = await res.json();
+    return data.values || [];
+  } catch (e) {
+    throw e;
+  }
+}
+
+function parsearFila(headers, fila) {
+  const obj = {};
+  headers.forEach((h, i) => { obj[h] = (fila[i] || '').trim(); });
+  return obj;
+}
+
+function extraerAño(fechaStr) {
+  if (!fechaStr) return null;
+  // Formato: D/MM/YYYY o DD/MM/YYYY
+  const partes = fechaStr.split('/');
+  if (partes.length === 3) {
+    const y = parseInt(partes[2]);
+    return y > 2000 ? y : null;
+  }
+  return null;
+}
+
+function extraerMes(fechaStr) {
+  if (!fechaStr) return null;
+  const partes = fechaStr.split('/');
+  if (partes.length === 3) return parseInt(partes[1]);
+  return null;
+}
+
+// ── CALCULAR MÉTRICAS ──────────────────────────────────────
+function calcularMetricas(filas) {
+  const total    = filas.length;
+  const llamadas = filas.filter(f => f['Llamada realizada y contestada (SI/NO)'] === 'Sí').length;
+  const visitas  = filas.filter(f => f['Visita realizada (SI/NO)'] === 'Sí').length;
+  const celula   = filas.filter(f => f['Ubicado en célula o Grupo Go! (SI/NO)'] === 'Sí').length;
+  return { total, llamadas, visitas, celula };
+}
+
+function calcularPorLider(filas) {
+  const mapa = {};
+  filas.forEach(f => {
+    const lider = f['Líder Principal'];
+    if (!lider || EXCLUIR_LIDERES.includes(lider)) return;
+    if (!mapa[lider]) mapa[lider] = [];
+    mapa[lider].push(f);
+  });
+
+  return Object.entries(mapa).map(([nombre, rows]) => {
+    const m = calcularMetricas(rows);
+    return {
+      nombre,
+      ganados:  m.total,
+      llamadas: m.total > 0 ? Math.round(m.llamadas / m.total * 100) : 0,
+      visitas:  m.total > 0 ? Math.round(m.visitas  / m.total * 100) : 0,
+      celula:   m.total > 0 ? Math.round(m.celula   / m.total * 100) : 0,
+    };
+  }).sort((a, b) => b.celula - a.celula);
+}
+
+function calcularPorMes(filas) {
+  const mapa = Array(12).fill(0);
+  filas.forEach(f => {
+    const mes = extraerMes(f['Marca temporal']);
+    if (mes >= 1 && mes <= 12) mapa[mes - 1]++;
+  });
+  return mapa;
+}
+
+// ── RENDER ─────────────────────────────────────────────────
+function renderKPIs(m24, m25) {
+  const grid = document.getElementById('kpiGrid');
+  grid.innerHTML = '';
+
+  if (añoActual === 2025 || añoActual === 'ambos') {
+    const delta = m25.total - m24.total;
+    grid.innerHTML += kpiHTML('verde', 'Personas ganadas 2025', m25.total,
+      `${delta >= 0 ? '↑' : '↓'} ${Math.abs(delta)} vs 2024`);
+    grid.innerHTML += kpiHTML('dorado', 'Llamadas realizadas', m25.llamadas,
+      `${pct(m25.llamadas, m25.total)}% del total`);
+    grid.innerHTML += kpiHTML('azul', 'Visitas realizadas', m25.visitas,
+      `${pct(m25.visitas, m25.total)}% del total`);
+    grid.innerHTML += kpiHTML('rojo', 'Ubicados en célula', m25.celula,
+      `${pct(m25.celula, m25.total)}% del total`);
+  } else {
+    grid.innerHTML += kpiHTML('verde', 'Personas ganadas 2024', m24.total, 'Año completo');
+    grid.innerHTML += kpiHTML('dorado', 'Llamadas realizadas', m24.llamadas,
+      `${pct(m24.llamadas, m24.total)}% del total`);
+    grid.innerHTML += kpiHTML('azul', 'Visitas realizadas', m24.visitas,
+      `${pct(m24.visitas, m24.total)}% del total`);
+    grid.innerHTML += kpiHTML('rojo', 'Ubicados en célula', m24.celula,
+      `${pct(m24.celula, m24.total)}% del total`);
+  }
+}
+
+function kpiHTML(color, label, valor, sub) {
+  return `<div class="kpi-card ${color}">
+    <div class="kpi-label">${label}</div>
+    <div class="kpi-valor">${valor}</div>
+    <div class="kpi-sub">${sub}</div>
+  </div>`;
+}
+
+function pct(parte, total) {
+  return total > 0 ? Math.round(parte / total * 100) : 0;
+}
+
+function renderEmbudo(m, label) {
+  document.getElementById('embudoTitulo').textContent = label;
+  const steps = document.getElementById('embudoSteps');
+  const datos = [
+    { label: 'Personas ganadas', val: m.total,    color: '#1a5c3a' },
+    { label: 'Llamada realizada', val: m.llamadas, color: '#2d8c5a' },
+    { label: 'Visita realizada',  val: m.visitas,  color: '#c9a84c' },
+    { label: 'Ubicado en célula', val: m.celula,   color: '#f0cc72' },
+  ];
+  steps.innerHTML = datos.map(d => {
+    const p = pct(d.val, m.total);
+    return `<div class="embudo-step">
+      <div class="embudo-step-num" style="color:${d.color}">${d.val}</div>
+      <div class="embudo-step-pct">${p}% del total</div>
+      <div class="embudo-step-label">${d.label}</div>
+      <div class="embudo-step-bar">
+        <div class="embudo-step-bar-fill" style="width:${p}%;background:${d.color}"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderChart(meses24, meses25) {
+  const chart = document.getElementById('barChart');
+  chart.innerHTML = '';
+  const maxVal = Math.max(...meses24, ...meses25, 1);
+
+  MESES_NOMBRES.forEach((mes, i) => {
+    const h24 = Math.round((meses24[i] / maxVal) * 150);
+    const h25 = Math.round((meses25[i] / maxVal) * 150);
+    let barsHTML = '';
+
+    if (añoActual === 2024) {
+      barsHTML = `<div class="bar-rect" style="height:${h24}px;background:#2d8c5a;width:80%" data-tip="2024: ${meses24[i]}"></div>`;
+    } else if (añoActual === 2025) {
+      barsHTML = `<div class="bar-rect" style="height:${h25}px;background:#c9a84c;width:80%" data-tip="2025: ${meses25[i]}"></div>`;
+    } else {
+      barsHTML = `
+        <div class="bar-rect" style="height:${h24}px;background:#2d8c5a;width:44%" data-tip="2024: ${meses24[i]}"></div>
+        <div class="bar-rect" style="height:${h25}px;background:#c9a84c;width:44%" data-tip="2025: ${meses25[i]}"></div>`;
+    }
+
+    chart.innerHTML += `
+      <div class="bar-col">
+        <div style="display:flex;align-items:flex-end;gap:2px;width:100%;justify-content:center">${barsHTML}</div>
+        <div class="bar-mes">${mes}</div>
+      </div>`;
+  });
+}
+
+function renderTabla(lideres) {
+  const tbody = document.getElementById('tablaBody');
+  tbody.innerHTML = '';
+  lideres.forEach(l => {
+    const color = l.celula >= 50 ? 'var(--verde-medio)' : l.celula >= 25 ? 'var(--dorado)' : 'var(--naranja)';
+    const pill  = l.celula >= 50 ? 'pill-verde' : l.celula >= 25 ? 'pill-amarillo' : 'pill-rojo';
+    const estado = l.celula >= 50 ? 'Fuerte' : l.celula >= 25 ? 'En desarrollo' : 'Requiere atención';
+    tbody.innerHTML += `<tr>
+      <td class="lider-nombre">${l.nombre}</td>
+      <td><strong>${l.ganados}</strong></td>
+      <td><div class="mini-bar-wrap">
+        <div class="mini-bar-bg"><div class="mini-bar" style="width:${l.llamadas}%;background:var(--verde-medio)"></div></div>
+        ${l.llamadas}%
+      </div></td>
+      <td><div class="mini-bar-wrap">
+        <div class="mini-bar-bg"><div class="mini-bar" style="width:${l.visitas}%;background:var(--dorado)"></div></div>
+        ${l.visitas}%
+      </div></td>
+      <td><div class="mini-bar-wrap">
+        <div class="mini-bar-bg"><div class="mini-bar" style="width:${l.celula}%;background:${color}"></div></div>
+        <strong style="color:${color}">${l.celula}%</strong>
+      </div></td>
+      <td><span class="pill ${pill}">${estado}</span></td>
+    </tr>`;
+  });
+}
+
+// ── CAMBIAR AÑO ────────────────────────────────────────────
+function cambiarAño(año, btn) {
+  añoActual = año;
+  document.querySelectorAll('.year-tab').forEach(t => t.classList.remove('activo'));
+  btn.classList.add('activo');
+  renderTodo();
+}
+
+function renderTodo() {
+  const filas24 = datosGlobales.filter(f => extraerAño(f['Marca temporal']) === 2024);
+  const filas25 = datosGlobales.filter(f => extraerAño(f['Marca temporal']) === 2025);
+  const m24 = calcularMetricas(filas24);
+  const m25 = calcularMetricas(filas25);
+  const meses24 = calcularPorMes(filas24);
+  const meses25 = calcularPorMes(filas25);
+
+  renderKPIs(m24, m25);
+
+  if (añoActual === 2024) {
+    renderEmbudo(m24, `Embudo 2024 — ${m24.total} personas`);
+    renderTabla(calcularPorLider(filas24));
+  } else if (añoActual === 2025) {
+    renderEmbudo(m25, `Embudo 2025 — ${m25.total} personas`);
+    renderTabla(calcularPorLider(filas25));
+  } else {
+    // Comparar: mostrar 2025 en embudo, tabla con ambos
+    renderEmbudo(m25, 'Embudo 2025 (comparar con 2024 en KPIs)');
+    renderTabla(calcularPorLider([...filas24, ...filas25]));
+  }
+
+  renderChart(meses24, meses25);
+}
+
+// ── INICIO ─────────────────────────────────────────────────
+async function init() {
+  const errorDiv = document.getElementById('error-msg');
+  try {
+    const rows = await cargarDatos();
+    if (rows.length < 2) throw new Error('No se encontraron datos en la hoja.');
+
+    const headers = rows[0];
+    datosGlobales = rows.slice(1).map(r => parsearFila(headers, r));
+
+    document.getElementById('ultima-actualizacion').textContent =
+      new Date().toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' });
+
+    renderTodo();
+
+    const loading = document.getElementById('loading');
+    loading.classList.add('oculto');
+    setTimeout(() => loading.remove(), 600);
+
+  } catch (e) {
+    document.getElementById('loading').remove();
+    errorDiv.style.display = 'block';
+    errorDiv.innerHTML = `
+      <strong>⚠️ Error al cargar los datos</strong><br><br>
+      ${e.message}<br><br>
+      <strong>Verifica que:</strong><br>
+      • El SHEET_ID y API_KEY en el código sean correctos<br>
+      • La hoja esté compartida como pública (solo lectura)<br>
+      • El nombre de la pestaña sea exactamente: <code>${SHEET_TAB}</code>
+    `;
+  }
+}
+
+init();
+</script>
+</body>
+</html>
