@@ -4,588 +4,592 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Consolidación — MCI Medellín</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --verde: #1a5c3a;
-    --verde-medio: #2d8c5a;
-    --verde-claro: #4db87a;
-    --dorado: #c9a84c;
-    --dorado-claro: #f0cc72;
-    --crema: #f5f0e8;
-    --oscuro: #0f2318;
-    --gris: #6b7c72;
-    --rojo: #c0392b;
-    --naranja: #e67e22;
+    --verde: #1a5c3a; --verde-medio: #2d8c5a; --verde-claro: #4db87a;
+    --dorado: #c9a84c; --dorado-claro: #f0cc72; --crema: #f5f0e8;
+    --oscuro: #0f2318; --gris: #6b7c72; --rojo: #c0392b;
+    --naranja: #e67e22; --azul: #2980b9;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--crema); color: var(--oscuro); min-height: 100vh; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:var(--crema); color:var(--oscuro); }
 
-  /* LOADING */
-  #loading {
-    position: fixed; inset: 0;
-    background: var(--verde);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    z-index: 999;
-    transition: opacity 0.5s;
-  }
-  #loading.oculto { opacity: 0; pointer-events: none; }
-  .spinner {
-    width: 48px; height: 48px;
-    border: 4px solid rgba(255,255,255,0.2);
-    border-top-color: var(--dorado-claro);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin-bottom: 20px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  #loading p { color: rgba(255,255,255,0.7); font-size: 14px; }
+  #loading { position:fixed; inset:0; background:var(--verde); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999; transition:opacity .5s; }
+  #loading.oculto { opacity:0; pointer-events:none; }
+  .spinner { width:48px; height:48px; border:4px solid rgba(255,255,255,.2); border-top-color:var(--dorado-claro); border-radius:50%; animation:spin .8s linear infinite; margin-bottom:20px; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  #loading p { color:rgba(255,255,255,.7); font-size:14px; }
+  #error-msg { display:none; background:#fdecea; border:1px solid #e74c3c; border-radius:12px; padding:20px 24px; margin:20px 40px; color:var(--rojo); font-size:14px; line-height:1.7; }
 
-  /* ERROR */
-  #error-msg {
-    display: none;
-    background: #fdecea;
-    border: 1px solid #e74c3c;
-    border-radius: 12px;
-    padding: 20px 24px;
-    margin: 20px 60px;
-    color: var(--rojo);
-    font-size: 14px;
-  }
+  nav { background:var(--oscuro); display:flex; align-items:center; padding:0 40px; position:sticky; top:0; z-index:100; overflow-x:auto; }
+  .nav-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:15px; color:var(--dorado-claro); padding:16px 0; margin-right:28px; white-space:nowrap; }
+  .nav-tab { padding:18px 18px; color:rgba(255,255,255,.5); font-size:13px; font-weight:500; cursor:pointer; border:none; background:none; border-bottom:3px solid transparent; transition:all .2s; white-space:nowrap; font-family:'DM Sans',sans-serif; }
+  .nav-tab:hover { color:rgba(255,255,255,.8); }
+  .nav-tab.activo { color:var(--dorado-claro); border-bottom-color:var(--dorado-claro); }
 
-  header {
-    background: var(--verde);
-    padding: 48px 60px 40px;
-    position: relative;
-    overflow: hidden;
-  }
-  header::before {
-    content: '';
-    position: absolute; top: -60px; right: -60px;
-    width: 300px; height: 300px;
-    border-radius: 50%;
-    background: rgba(201,168,76,0.12);
-  }
-  .header-label {
-    font-family: 'Syne', sans-serif;
-    font-size: 11px; letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--dorado-claro); margin-bottom: 12px;
-  }
-  header h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: 42px; font-weight: 800;
-    color: #fff; line-height: 1.1; max-width: 600px;
-  }
-  header h1 span { color: var(--dorado-claro); }
-  .header-meta {
-    margin-top: 16px;
-    color: rgba(255,255,255,0.6);
-    font-size: 14px;
-  }
-  .header-meta strong { color: rgba(255,255,255,0.9); }
+  header { background:var(--verde); padding:40px 40px 32px; position:relative; overflow:hidden; }
+  header::before { content:''; position:absolute; top:-60px; right:-60px; width:280px; height:280px; border-radius:50%; background:rgba(201,168,76,.1); }
+  .header-label { font-family:'Syne',sans-serif; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--dorado-claro); margin-bottom:10px; }
+  header h1 { font-family:'Syne',sans-serif; font-size:36px; font-weight:800; color:#fff; line-height:1.1; }
+  header h1 span { color:var(--dorado-claro); }
+  .header-meta { margin-top:12px; color:rgba(255,255,255,.55); font-size:13px; }
+  .header-meta strong { color:rgba(255,255,255,.9); }
 
-  main { padding: 48px 60px; max-width: 1200px; margin: 0 auto; }
+  main { padding:36px 40px; max-width:1300px; margin:0 auto; }
 
-  .section-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 13px; font-weight: 700;
-    letter-spacing: 2px; text-transform: uppercase;
-    color: var(--verde-medio); margin-bottom: 24px;
-    display: flex; align-items: center; gap: 12px;
-  }
-  .section-title::after {
-    content: ''; flex: 1;
-    height: 1px; background: rgba(45,140,90,0.2);
-  }
+  .section-title { font-family:'Syne',sans-serif; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--verde-medio); margin-bottom:20px; display:flex; align-items:center; gap:12px; }
+  .section-title::after { content:''; flex:1; height:1px; background:rgba(45,140,90,.2); }
 
-  /* SELECTOR AÑO */
-  .year-tabs {
-    display: flex; gap: 8px; margin-bottom: 32px;
-  }
-  .year-tab {
-    padding: 8px 24px;
-    border-radius: 99px;
-    border: 2px solid var(--verde-medio);
-    background: transparent;
-    color: var(--verde-medio);
-    font-family: 'Syne', sans-serif;
-    font-weight: 700; font-size: 14px;
-    cursor: pointer; transition: all 0.2s;
-  }
-  .year-tab.activo {
-    background: var(--verde);
-    color: #fff; border-color: var(--verde);
-  }
+  .kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:36px; }
+  .kpi-card { background:#fff; border-radius:14px; padding:22px; border:1px solid rgba(0,0,0,.06); position:relative; overflow:hidden; transition:transform .2s; }
+  .kpi-card:hover { transform:translateY(-2px); }
+  .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+  .kpi-card.verde::before { background:var(--verde-claro); }
+  .kpi-card.dorado::before { background:var(--dorado); }
+  .kpi-card.azul::before { background:var(--azul); }
+  .kpi-card.rojo::before { background:var(--rojo); }
+  .kpi-label { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--gris); margin-bottom:8px; }
+  .kpi-valor { font-family:'Syne',sans-serif; font-size:32px; font-weight:800; color:var(--oscuro); line-height:1; }
+  .kpi-sub { margin-top:6px; font-size:12px; color:var(--gris); }
 
-  /* KPIs */
-  .kpi-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 16px; margin-bottom: 48px;
-  }
-  .kpi-card {
-    background: #fff; border-radius: 16px;
-    padding: 24px; border: 1px solid rgba(0,0,0,0.06);
-    position: relative; overflow: hidden;
-    transition: transform 0.2s;
-  }
-  .kpi-card:hover { transform: translateY(-3px); }
-  .kpi-card::before {
-    content: ''; position: absolute;
-    top: 0; left: 0; right: 0; height: 3px;
-  }
-  .kpi-card.verde::before { background: var(--verde-claro); }
-  .kpi-card.dorado::before { background: var(--dorado); }
-  .kpi-card.azul::before { background: #3498db; }
-  .kpi-card.rojo::before { background: var(--rojo); }
-  .kpi-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gris); margin-bottom: 10px; }
-  .kpi-valor { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; color: var(--oscuro); line-height: 1; }
-  .kpi-sub { margin-top: 8px; font-size: 13px; color: var(--gris); }
+  .embudo-card { background:#fff; border-radius:14px; padding:28px; border:1px solid rgba(0,0,0,.06); margin-bottom:36px; }
+  .embudo-card h3 { font-family:'Syne',sans-serif; font-size:15px; font-weight:700; margin-bottom:20px; }
+  .embudo-steps { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  .embudo-step { text-align:center; padding:18px; border-radius:12px; background:#fafafa; }
+  .embudo-step-num { font-family:'Syne',sans-serif; font-size:28px; font-weight:800; }
+  .embudo-step-pct { font-size:12px; color:var(--gris); margin-top:2px; }
+  .embudo-step-label { font-size:12px; font-weight:600; margin-top:8px; }
+  .embudo-step-bar { height:4px; border-radius:99px; margin-top:10px; background:#eee; overflow:hidden; }
+  .embudo-step-bar-fill { height:100%; border-radius:99px; }
 
-  /* EMBUDO */
-  .embudo-card {
-    background: #fff; border-radius: 16px;
-    padding: 32px; border: 1px solid rgba(0,0,0,0.06);
-    margin-bottom: 48px;
-  }
-  .embudo-card h3 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 24px; }
-  .embudo-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-  .embudo-step {
-    text-align: center; padding: 20px;
-    border-radius: 12px; background: #fafafa;
-    position: relative;
-  }
-  .embudo-step-num {
-    font-family: 'Syne', sans-serif;
-    font-size: 32px; font-weight: 800;
-  }
-  .embudo-step-pct {
-    font-size: 13px; color: var(--gris); margin-top: 4px;
-  }
-  .embudo-step-label {
-    font-size: 12px; font-weight: 600;
-    margin-top: 8px; color: var(--oscuro);
-  }
-  .embudo-step-bar {
-    height: 4px; border-radius: 99px;
-    margin-top: 12px; background: #eee;
-    overflow: hidden;
-  }
-  .embudo-step-bar-fill { height: 100%; border-radius: 99px; }
+  .chart-card { background:#fff; border-radius:14px; padding:28px; border:1px solid rgba(0,0,0,.06); margin-bottom:36px; }
+  .chart-card h3 { font-family:'Syne',sans-serif; font-size:15px; font-weight:700; margin-bottom:20px; }
+  .bars-chart { display:flex; align-items:flex-end; gap:6px; height:150px; }
+  .bar-col { flex:1; display:flex; flex-direction:column; align-items:center; height:100%; justify-content:flex-end; }
+  .bar-duo { display:flex; gap:2px; align-items:flex-end; width:100%; justify-content:center; }
+  .bar-rect { border-radius:4px 4px 0 0; min-height:2px; position:relative; cursor:pointer; transition:opacity .2s; }
+  .bar-rect:hover { opacity:.75; }
+  .bar-tip { position:absolute; bottom:105%; left:50%; transform:translateX(-50%); background:var(--oscuro); color:#fff; padding:3px 8px; border-radius:6px; font-size:11px; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity .15s; }
+  .bar-rect:hover .bar-tip { opacity:1; }
+  .bar-mes { font-size:10px; color:var(--gris); margin-top:5px; }
+  .chart-legend { display:flex; gap:16px; margin-top:14px; }
+  .legend-item { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--gris); }
+  .legend-dot { width:10px; height:10px; border-radius:2px; }
 
-  /* MENSUAL */
-  .chart-card {
-    background: #fff; border-radius: 16px;
-    padding: 32px; border: 1px solid rgba(0,0,0,0.06);
-    margin-bottom: 48px;
-  }
-  .chart-card h3 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 24px; }
-  .bars-chart { display: flex; align-items: flex-end; gap: 8px; height: 160px; }
-  .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; }
-  .bar-rect { width: 100%; border-radius: 4px 4px 0 0; min-height: 2px; position: relative; cursor: pointer; }
-  .bar-rect:hover::after {
-    content: attr(data-tip);
-    position: absolute; bottom: 105%; left: 50%; transform: translateX(-50%);
-    background: var(--oscuro); color: #fff;
-    padding: 4px 8px; border-radius: 6px;
-    font-size: 11px; white-space: nowrap; pointer-events: none;
-  }
-  .bar-mes { font-size: 10px; color: var(--gris); margin-top: 6px; }
+  .tabla-wrap { background:#fff; border-radius:14px; overflow:hidden; border:1px solid rgba(0,0,0,.06); margin-bottom:36px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  thead th { background:var(--verde); color:#fff; padding:13px 14px; text-align:left; font-family:'Syne',sans-serif; font-size:11px; letter-spacing:1px; text-transform:uppercase; font-weight:600; }
+  tbody tr { border-bottom:1px solid #f0f0f0; transition:background .15s; }
+  tbody tr:last-child { border-bottom:none; }
+  tbody tr:hover { background:#f5f9f7; }
+  tbody td { padding:11px 14px; vertical-align:middle; }
+  .lider-nombre { font-weight:500; }
+  .mini-bar-wrap { display:flex; align-items:center; gap:8px; }
+  .mini-bar-bg { width:65px; height:5px; background:#f0f0f0; border-radius:99px; overflow:hidden; flex-shrink:0; }
+  .mini-bar { height:100%; border-radius:99px; }
+  .pill { display:inline-block; padding:3px 9px; border-radius:99px; font-size:11px; font-weight:600; }
+  .pill-verde { background:#e8f5ee; color:var(--verde); }
+  .pill-amarillo { background:#fef9e7; color:#b7860b; }
+  .pill-rojo { background:#fdecea; color:var(--rojo); }
 
-  /* TABLA */
-  .tabla-wrap {
-    background: #fff; border-radius: 16px;
-    overflow: hidden; border: 1px solid rgba(0,0,0,0.06);
-    margin-bottom: 48px;
-  }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  thead th {
-    background: var(--verde); color: #fff;
-    padding: 14px 16px; text-align: left;
-    font-family: 'Syne', sans-serif;
-    font-size: 11px; letter-spacing: 1px;
-    text-transform: uppercase; font-weight: 600;
-  }
-  tbody tr { border-bottom: 1px solid #f0f0f0; transition: background 0.15s; }
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: #fafaf8; }
-  tbody td { padding: 12px 16px; vertical-align: middle; }
-  .lider-nombre { font-weight: 500; }
-  .mini-bar-wrap { display: flex; align-items: center; gap: 8px; }
-  .mini-bar-bg { width: 70px; height: 6px; background: #f0f0f0; border-radius: 99px; overflow: hidden; flex-shrink: 0; }
-  .mini-bar { height: 100%; border-radius: 99px; }
-  .pill {
-    display: inline-block; padding: 3px 10px;
-    border-radius: 99px; font-size: 11px; font-weight: 600;
-  }
-  .pill-verde { background: #e8f5ee; color: var(--verde); }
-  .pill-amarillo { background: #fef9e7; color: #b7860b; }
-  .pill-rojo { background: #fdecea; color: var(--rojo); }
+  .clickable-row { cursor:pointer; }
 
-  footer {
-    background: var(--oscuro); color: rgba(255,255,255,0.4);
-    text-align: center; padding: 24px; font-size: 12px;
-  }
+  /* FILTROS */
+  .filtros-bar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:18px; }
+  .filtro-input { padding:8px 12px; border-radius:8px; border:1px solid rgba(0,0,0,.12); font-family:'DM Sans',sans-serif; font-size:13px; background:#fff; color:var(--oscuro); outline:none; transition:border-color .2s; }
+  .filtro-input:focus { border-color:var(--verde-medio); }
+  .filtro-input.wide { min-width:200px; }
+  .filtro-count { font-size:13px; color:var(--gris); margin-left:auto; }
 
-  @media (max-width: 768px) {
-    main { padding: 24px 16px; }
-    header { padding: 32px 16px; }
-    header h1 { font-size: 28px; }
-    .kpi-grid { grid-template-columns: 1fr 1fr; }
-    .embudo-steps { grid-template-columns: 1fr 1fr; }
+  /* DETALLE LÍDER */
+  .back-btn { display:inline-flex; align-items:center; gap:8px; background:none; border:none; cursor:pointer; color:var(--verde-medio); font-size:14px; font-weight:600; margin-bottom:24px; padding:0; font-family:'DM Sans',sans-serif; }
+  .back-btn:hover { color:var(--verde); }
+  .lider-header { background:#fff; border-radius:14px; padding:28px; border:1px solid rgba(0,0,0,.06); margin-bottom:24px; display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:20px; }
+  .lider-header h2 { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; }
+  .lider-header-stats { display:flex; gap:28px; }
+  .lider-stat { text-align:center; }
+  .lider-stat-val { font-family:'Syne',sans-serif; font-size:26px; font-weight:800; }
+  .lider-stat-label { font-size:11px; color:var(--gris); text-transform:uppercase; letter-spacing:1px; }
+
+  /* TABLA PERSONAS */
+  .tabla-personas thead th { padding:11px 12px; font-size:10px; }
+  .tabla-personas tbody td { padding:9px 12px; font-size:12px; }
+  .badge { display:inline-block; padding:2px 8px; border-radius:99px; font-size:11px; font-weight:500; }
+  .badge-si { background:#e8f5ee; color:var(--verde); }
+  .badge-no { background:#fdecea; color:var(--rojo); }
+  .badge-sg { background:#f5f5f5; color:var(--gris); }
+
+  /* COMPARATIVO */
+  .comp-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:36px; }
+  .comp-card { background:#fff; border-radius:14px; padding:24px; border:1px solid rgba(0,0,0,.06); }
+  .comp-card h4 { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; margin-bottom:16px; }
+  .comp-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-size:13px; }
+  .comp-row-label { color:var(--gris); max-width:170px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .comp-row-vals { display:flex; gap:10px; align-items:center; }
+  .comp-val { font-weight:700; font-family:'Syne',sans-serif; font-size:15px; }
+  .comp-val.y24 { color:var(--verde-medio); }
+  .comp-val.y25 { color:var(--dorado); }
+
+  footer { background:var(--oscuro); color:rgba(255,255,255,.4); text-align:center; padding:20px; font-size:12px; }
+
+  @media(max-width:768px) {
+    main { padding:20px 16px; }
+    header { padding:28px 16px; }
+    header h1 { font-size:26px; }
+    .kpi-grid { grid-template-columns:1fr 1fr; }
+    .embudo-steps { grid-template-columns:1fr 1fr; }
+    .comp-grid { grid-template-columns:1fr; }
   }
 </style>
 </head>
 <body>
 
-<!-- LOADING -->
-<div id="loading">
-  <div class="spinner"></div>
-  <p>Cargando datos desde Google Sheets…</p>
-</div>
-
+<div id="loading"><div class="spinner"></div><p>Cargando datos desde Google Sheets…</p></div>
 <div id="error-msg"></div>
+
+<nav>
+  <div class="nav-logo">MCI Medellín</div>
+  <button class="nav-tab activo" onclick="mostrarVista('2026',this)">2026 — Principal</button>
+  <button class="nav-tab" onclick="mostrarVista('historico',this)">Histórico 2024–2025</button>
+  <button class="nav-tab" onclick="mostrarVista('lideres',this)">Por Líder</button>
+</nav>
 
 <header>
   <div class="header-label">MCI Medellín Sede Central · Reuniones Domingo</div>
-  <h1>Evolución y efectividad<br>en <span>consolidación</span></h1>
-  <div class="header-meta">
-    Datos en vivo desde Google Sheets ·
-    Última actualización: <strong id="ultima-actualizacion">cargando…</strong>
-  </div>
+  <h1 id="headerTitulo">Consolidación <span>2026</span></h1>
+  <div class="header-meta">Datos en vivo · Actualizado: <strong id="ultimaAct">cargando…</strong></div>
 </header>
 
 <main>
 
-  <div class="year-tabs">
-    <button class="year-tab activo" onclick="cambiarAño(2025, this)">2025</button>
-    <button class="year-tab" onclick="cambiarAño(2024, this)">2024</button>
-    <button class="year-tab" onclick="cambiarAño('ambos', this)">Comparar</button>
+  <!-- ══ 2026 ══ -->
+  <div id="vista2026">
+    <div class="section-title">Resumen 2026</div>
+    <div class="kpi-grid" id="kpi2026"></div>
+    <div class="section-title">Embudo de consolidación 2026</div>
+    <div class="embudo-card"><h3 id="embudoT26"></h3><div class="embudo-steps" id="embudo26"></div></div>
+    <div class="section-title">Personas ganadas por mes — 2026</div>
+    <div class="chart-card"><h3>Distribución mensual</h3><div class="bars-chart" id="chart26"></div></div>
+    <div class="section-title">Desempeño por líder — 2026</div>
+    <div class="tabla-wrap"><table>
+      <thead><tr><th>Líder</th><th>Ganados</th><th>Llamadas</th><th>Visitas</th><th>En célula</th><th>Estado</th></tr></thead>
+      <tbody id="tabla26"></tbody>
+    </table></div>
   </div>
 
-  <div class="section-title">Resumen general</div>
-  <div class="kpi-grid" id="kpiGrid"></div>
-
-  <div class="section-title">Embudo de consolidación</div>
-  <div class="embudo-card">
-    <h3 id="embudoTitulo"></h3>
-    <div class="embudo-steps" id="embudoSteps"></div>
+  <!-- ══ HISTÓRICO ══ -->
+  <div id="vistaHistorico" style="display:none">
+    <div class="section-title">Comparativo general</div>
+    <div class="comp-grid" id="compGrid"></div>
+    <div class="section-title">Evolución mensual 2024 vs 2025</div>
+    <div class="chart-card"><h3>Personas ganadas por mes</h3>
+      <div class="bars-chart" id="chartHist"></div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--verde-medio)"></div>2024</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--dorado)"></div>2025</div>
+      </div>
+    </div>
+    <div class="section-title">Embudo 2024</div>
+    <div class="embudo-card"><h3 id="embudoT24"></h3><div class="embudo-steps" id="embudo24"></div></div>
+    <div class="section-title">Embudo 2025</div>
+    <div class="embudo-card"><h3 id="embudoT25"></h3><div class="embudo-steps" id="embudo25"></div></div>
+    <div class="section-title">Tendencia por líder 2024 → 2025</div>
+    <div class="tabla-wrap"><table>
+      <thead><tr><th>Líder</th><th>Ganados 24</th><th>Célula 24</th><th>Ganados 25</th><th>Célula 25</th><th>Tendencia</th></tr></thead>
+      <tbody id="tablaComp"></tbody>
+    </table></div>
   </div>
 
-  <div class="section-title">Personas ganadas por mes</div>
-  <div class="chart-card">
-    <h3 id="chartTitulo">Distribución mensual</h3>
-    <div class="bars-chart" id="barChart"></div>
-  </div>
+  <!-- ══ POR LÍDER ══ -->
+  <div id="vistaLideres" style="display:none">
 
-  <div class="section-title">Desempeño por líder</div>
-  <div class="tabla-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Líder</th>
-          <th>Ganados</th>
-          <th>Llamadas %</th>
-          <th>Visitas %</th>
-          <th>En célula %</th>
-          <th>Estado</th>
-        </tr>
-      </thead>
-      <tbody id="tablaBody"></tbody>
-    </table>
+    <div id="selectorLider">
+      <div class="section-title">Selecciona un líder</div>
+      <div class="filtros-bar">
+        <input class="filtro-input wide" type="text" id="buscaLider" placeholder="Buscar líder…" oninput="renderSelector()">
+        <select class="filtro-input" id="añoLider" onchange="renderSelector()">
+          <option value="2026">2026</option>
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+          <option value="todos">Todos los años</option>
+        </select>
+      </div>
+      <div class="tabla-wrap"><table>
+        <thead><tr><th>Líder</th><th>Ganados</th><th>Llamadas</th><th>Visitas</th><th>En célula</th><th>Estado</th></tr></thead>
+        <tbody id="tablaSelector"></tbody>
+      </table></div>
+    </div>
+
+    <div id="detalleL" style="display:none">
+      <button class="back-btn" onclick="volverSelector()">← Volver a todos los líderes</button>
+      <div class="lider-header">
+        <div>
+          <h2 id="lNombre"></h2>
+          <div style="color:var(--gris);font-size:13px;margin-top:6px" id="lSub"></div>
+        </div>
+        <div class="lider-header-stats" id="lStats"></div>
+      </div>
+      <div class="section-title">Personas invitadas</div>
+      <div class="filtros-bar">
+        <input class="filtro-input wide" type="text" id="buscaP" placeholder="Buscar nombre o quién invitó…" oninput="filtrarP()">
+        <select class="filtro-input" id="fLlamada" onchange="filtrarP()">
+          <option value="">Llamada: todas</option>
+          <option value="Sí">Realizada</option>
+          <option value="No">No realizada</option>
+          <option value="No. Errado">Número errado</option>
+          <option value="Sin Gestión">Sin gestión</option>
+        </select>
+        <select class="filtro-input" id="fVisita" onchange="filtrarP()">
+          <option value="">Visita: todas</option>
+          <option value="Sí">Realizada</option>
+          <option value="No">No realizada</option>
+        </select>
+        <select class="filtro-input" id="fCelula" onchange="filtrarP()">
+          <option value="">Célula: todas</option>
+          <option value="Sí">Ubicado</option>
+          <option value="No">No ubicado</option>
+        </select>
+        <div class="filtro-count" id="pCount"></div>
+      </div>
+      <div class="tabla-wrap"><table class="tabla-personas">
+        <thead><tr>
+          <th>Nombre completo</th><th>Quién invitó</th><th>Fecha</th>
+          <th>Género</th><th>Barrio</th>
+          <th>Llamada</th><th>Visita</th><th>En célula</th>
+        </tr></thead>
+        <tbody id="tablaP"></tbody>
+      </table></div>
+    </div>
+
   </div>
 
 </main>
-
-<footer>
-  Dashboard en vivo · MCI Medellín Sede Central · Datos desde Google Sheets
-</footer>
+<footer>Dashboard en vivo · MCI Medellín Sede Central · Datos desde Google Sheets</footer>
 
 <script>
 // ============================================================
 // ⚙️  CONFIGURACIÓN — CAMBIA ESTOS DOS VALORES
 // ============================================================
-const SHEET_ID  = '1F9PRi4vLl59iDoirf9nMMfuA36WvA5Et6psbulI03EE';           // El ID del documento de Sheets
-const API_KEY   = 'AIzaSyDhPN3O3vAHov5IteHzbih6Jru_qHSg63U';            // Tu clave de API de Google
-const SHEET_TAB = 'Registro Ganar Reuniones';   // Nombre exacto de la pestaña
+const SHEET_ID  = '1F9PRi4vLl59iDoirf9nMMfuA36WvA5Et6psbulI03EE';
+const API_KEY   = 'AIzaSyDhPN3O3vAHov5IteHzbih6Jru_qHSg63U';
+const SHEET_TAB = 'Registro Ganar Reuniones';
 // ============================================================
 
-const MESES_NOMBRES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-const EXCLUIR_LIDERES = [
-  'Vine por cuenta propia/No conozco a mi líder de 12',
-  'No conozco a mi líder de 12',
-  'Vine por cuenta propia',
-  'Vine de visita asisto a otra iglesia',
-  'VERIFICANDO INFO',
-  'Grupo anexo Pastores Leyva'
-];
+const MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const EXCLUIR = ['vine por cuenta propia','no conozco a mi líder','vine de visita','verificando','grupo anexo'];
 
-let datosGlobales = [];
-let añoActual = 2025;
+let DATOS = [];
+let personasActuales = [];
 
-// ── FETCH ──────────────────────────────────────────────────
+// ── FETCH ──
 async function cargarDatos() {
-  const range = encodeURIComponent(`${SHEET_TAB}!A:S`);
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`;
-
-  try {
-    const res = await fetch(url);
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error?.message || 'Error al conectar con Sheets');
-    }
-    const data = await res.json();
-    return data.values || [];
-  } catch (e) {
-    throw e;
-  }
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(SHEET_TAB+'!A:P')}?key=${API_KEY}`;
+  const res = await fetch(url);
+  if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || 'Error API'); }
+  return (await res.json()).values || [];
 }
 
-function parsearFila(headers, fila) {
-  const obj = {};
-  headers.forEach((h, i) => { obj[h] = (fila[i] || '').trim(); });
-  return obj;
+function parsear(headers, fila) {
+  const o = {}; headers.forEach((h,i) => o[h] = (fila[i]||'').trim()); return o;
 }
 
-function extraerAño(fechaStr) {
-  if (!fechaStr) return null;
-  // Formato: D/MM/YYYY o DD/MM/YYYY
-  const partes = fechaStr.split('/');
-  if (partes.length === 3) {
-    const y = parseInt(partes[2]);
-    return y > 2000 ? y : null;
-  }
+function getAño(f) {
+  const p = (f['Marca temporal']||'').split('/');
+  if (p.length===3){ const y=parseInt(p[2]); return y>2000?y:null; }
   return null;
 }
+function getMes(f) { const p=(f['Marca temporal']||'').split('/'); return p.length===3?parseInt(p[1]):null; }
+function getFecha(f) { const p=(f['Marca temporal']||'').split('/'); return p.length>=3?`${p[0]}/${p[1]}/${p[2].split(' ')[0]}`:'-'; }
 
-function extraerMes(fechaStr) {
-  if (!fechaStr) return null;
-  const partes = fechaStr.split('/');
-  if (partes.length === 3) return parseInt(partes[1]);
-  return null;
+function esExcluido(lider) { const l=(lider||'').toLowerCase(); return EXCLUIR.some(e=>l.includes(e)); }
+
+// ── MÉTRICAS ──
+function metricas(filas) {
+  return {
+    total:    filas.length,
+    llamadas: filas.filter(f=>f['Llamada realizada y contestada (SI/NO)']==='Sí').length,
+    visitas:  filas.filter(f=>f['Visita realizada (SI/NO)']==='Sí').length,
+    celula:   filas.filter(f=>f['Ubicado en célula o Grupo Go! (SI/NO)']==='Sí').length,
+  };
 }
 
-// ── CALCULAR MÉTRICAS ──────────────────────────────────────
-function calcularMetricas(filas) {
-  const total    = filas.length;
-  const llamadas = filas.filter(f => f['Llamada realizada y contestada (SI/NO)'] === 'Sí').length;
-  const visitas  = filas.filter(f => f['Visita realizada (SI/NO)'] === 'Sí').length;
-  const celula   = filas.filter(f => f['Ubicado en célula o Grupo Go! (SI/NO)'] === 'Sí').length;
-  return { total, llamadas, visitas, celula };
+function pct(p,t) { return t>0?Math.round(p/t*100):0; }
+
+function porLider(filas) {
+  const m={};
+  filas.forEach(f=>{ const l=f['Líder Principal']; if(!l||esExcluido(l)) return; if(!m[l]) m[l]=[]; m[l].push(f); });
+  return Object.entries(m).map(([nombre,rows])=>{
+    const mt=metricas(rows);
+    return { nombre, ganados:mt.total, llamadas:pct(mt.llamadas,mt.total), visitas:pct(mt.visitas,mt.total), celula:pct(mt.celula,mt.total) };
+  }).sort((a,b)=>b.celula-a.celula);
 }
 
-function calcularPorLider(filas) {
-  const mapa = {};
-  filas.forEach(f => {
-    const lider = f['Líder Principal'];
-    if (!lider || EXCLUIR_LIDERES.includes(lider)) return;
-    if (!mapa[lider]) mapa[lider] = [];
-    mapa[lider].push(f);
-  });
+function porMes(filas) { const a=Array(12).fill(0); filas.forEach(f=>{ const m=getMes(f); if(m>=1&&m<=12) a[m-1]++; }); return a; }
 
-  return Object.entries(mapa).map(([nombre, rows]) => {
-    const m = calcularMetricas(rows);
-    return {
-      nombre,
-      ganados:  m.total,
-      llamadas: m.total > 0 ? Math.round(m.llamadas / m.total * 100) : 0,
-      visitas:  m.total > 0 ? Math.round(m.visitas  / m.total * 100) : 0,
-      celula:   m.total > 0 ? Math.round(m.celula   / m.total * 100) : 0,
-    };
-  }).sort((a, b) => b.celula - a.celula);
+// ── HTML HELPERS ──
+function kpiH(color,label,val,sub) {
+  return `<div class="kpi-card ${color}"><div class="kpi-label">${label}</div><div class="kpi-valor">${val}</div><div class="kpi-sub">${sub}</div></div>`;
 }
 
-function calcularPorMes(filas) {
-  const mapa = Array(12).fill(0);
-  filas.forEach(f => {
-    const mes = extraerMes(f['Marca temporal']);
-    if (mes >= 1 && mes <= 12) mapa[mes - 1]++;
-  });
-  return mapa;
+function renderKPI(id,m,tag) {
+  document.getElementById(id).innerHTML =
+    kpiH('verde',`Personas ganadas ${tag}`,m.total,'Total registros') +
+    kpiH('dorado','Llamadas realizadas',m.llamadas,`${pct(m.llamadas,m.total)}% del total`) +
+    kpiH('azul','Visitas realizadas',m.visitas,`${pct(m.visitas,m.total)}% del total`) +
+    kpiH('rojo','Ubicados en célula',m.celula,`${pct(m.celula,m.total)}% del total`);
 }
 
-// ── RENDER ─────────────────────────────────────────────────
-function renderKPIs(m24, m25) {
-  const grid = document.getElementById('kpiGrid');
-  grid.innerHTML = '';
-
-  if (añoActual === 2025 || añoActual === 'ambos') {
-    const delta = m25.total - m24.total;
-    grid.innerHTML += kpiHTML('verde', 'Personas ganadas 2025', m25.total,
-      `${delta >= 0 ? '↑' : '↓'} ${Math.abs(delta)} vs 2024`);
-    grid.innerHTML += kpiHTML('dorado', 'Llamadas realizadas', m25.llamadas,
-      `${pct(m25.llamadas, m25.total)}% del total`);
-    grid.innerHTML += kpiHTML('azul', 'Visitas realizadas', m25.visitas,
-      `${pct(m25.visitas, m25.total)}% del total`);
-    grid.innerHTML += kpiHTML('rojo', 'Ubicados en célula', m25.celula,
-      `${pct(m25.celula, m25.total)}% del total`);
-  } else {
-    grid.innerHTML += kpiHTML('verde', 'Personas ganadas 2024', m24.total, 'Año completo');
-    grid.innerHTML += kpiHTML('dorado', 'Llamadas realizadas', m24.llamadas,
-      `${pct(m24.llamadas, m24.total)}% del total`);
-    grid.innerHTML += kpiHTML('azul', 'Visitas realizadas', m24.visitas,
-      `${pct(m24.visitas, m24.total)}% del total`);
-    grid.innerHTML += kpiHTML('rojo', 'Ubicados en célula', m24.celula,
-      `${pct(m24.celula, m24.total)}% del total`);
-  }
-}
-
-function kpiHTML(color, label, valor, sub) {
-  return `<div class="kpi-card ${color}">
-    <div class="kpi-label">${label}</div>
-    <div class="kpi-valor">${valor}</div>
-    <div class="kpi-sub">${sub}</div>
-  </div>`;
-}
-
-function pct(parte, total) {
-  return total > 0 ? Math.round(parte / total * 100) : 0;
-}
-
-function renderEmbudo(m, label) {
-  document.getElementById('embudoTitulo').textContent = label;
-  const steps = document.getElementById('embudoSteps');
-  const datos = [
-    { label: 'Personas ganadas', val: m.total,    color: '#1a5c3a' },
-    { label: 'Llamada realizada', val: m.llamadas, color: '#2d8c5a' },
-    { label: 'Visita realizada',  val: m.visitas,  color: '#c9a84c' },
-    { label: 'Ubicado en célula', val: m.celula,   color: '#f0cc72' },
+function renderEmbudo(cId,tId,m,label) {
+  document.getElementById(tId).textContent=label;
+  const pasos=[
+    {label:'Personas ganadas',val:m.total,color:'#1a5c3a'},
+    {label:'Llamada realizada',val:m.llamadas,color:'#2d8c5a'},
+    {label:'Visita realizada',val:m.visitas,color:'#c9a84c'},
+    {label:'Ubicado en célula',val:m.celula,color:'#f0cc72'},
   ];
-  steps.innerHTML = datos.map(d => {
-    const p = pct(d.val, m.total);
+  document.getElementById(cId).innerHTML=pasos.map(p=>{
+    const pc=pct(p.val,m.total);
     return `<div class="embudo-step">
-      <div class="embudo-step-num" style="color:${d.color}">${d.val}</div>
-      <div class="embudo-step-pct">${p}% del total</div>
-      <div class="embudo-step-label">${d.label}</div>
-      <div class="embudo-step-bar">
-        <div class="embudo-step-bar-fill" style="width:${p}%;background:${d.color}"></div>
-      </div>
+      <div class="embudo-step-num" style="color:${p.color}">${p.val}</div>
+      <div class="embudo-step-pct">${pc}% del total</div>
+      <div class="embudo-step-label">${p.label}</div>
+      <div class="embudo-step-bar"><div class="embudo-step-bar-fill" style="width:${pc}%;background:${p.color}"></div></div>
     </div>`;
   }).join('');
 }
 
-function renderChart(meses24, meses25) {
-  const chart = document.getElementById('barChart');
-  chart.innerHTML = '';
-  const maxVal = Math.max(...meses24, ...meses25, 1);
+function barRect(h,color,tip,w='80%') {
+  return `<div class="bar-rect" style="height:${h}px;background:${color};width:${w}"><div class="bar-tip">${tip}</div></div>`;
+}
 
-  MESES_NOMBRES.forEach((mes, i) => {
-    const h24 = Math.round((meses24[i] / maxVal) * 150);
-    const h25 = Math.round((meses25[i] / maxVal) * 150);
-    let barsHTML = '';
+function renderChart1(id,meses,color,tag) {
+  const max=Math.max(...meses,1);
+  document.getElementById(id).innerHTML=MESES.map((m,i)=>{
+    const h=Math.round((meses[i]/max)*140);
+    return `<div class="bar-col">${barRect(h,color,`${tag}: ${meses[i]}`)}<div class="bar-mes">${m}</div></div>`;
+  }).join('');
+}
 
-    if (añoActual === 2024) {
-      barsHTML = `<div class="bar-rect" style="height:${h24}px;background:#2d8c5a;width:80%" data-tip="2024: ${meses24[i]}"></div>`;
-    } else if (añoActual === 2025) {
-      barsHTML = `<div class="bar-rect" style="height:${h25}px;background:#c9a84c;width:80%" data-tip="2025: ${meses25[i]}"></div>`;
-    } else {
-      barsHTML = `
-        <div class="bar-rect" style="height:${h24}px;background:#2d8c5a;width:44%" data-tip="2024: ${meses24[i]}"></div>
-        <div class="bar-rect" style="height:${h25}px;background:#c9a84c;width:44%" data-tip="2025: ${meses25[i]}"></div>`;
-    }
+function renderChart2(id,m24,m25) {
+  const max=Math.max(...m24,...m25,1);
+  document.getElementById(id).innerHTML=MESES.map((m,i)=>{
+    const h24=Math.round((m24[i]/max)*140), h25=Math.round((m25[i]/max)*140);
+    return `<div class="bar-col"><div class="bar-duo">
+      ${barRect(h24,'#2d8c5a',`2024: ${m24[i]}`,'45%')}
+      ${barRect(h25,'#c9a84c',`2025: ${m25[i]}`,'45%')}
+    </div><div class="bar-mes">${m}</div></div>`;
+  }).join('');
+}
 
-    chart.innerHTML += `
-      <div class="bar-col">
-        <div style="display:flex;align-items:flex-end;gap:2px;width:100%;justify-content:center">${barsHTML}</div>
-        <div class="bar-mes">${mes}</div>
-      </div>`;
+function miniBar(val,color) {
+  return `<div class="mini-bar-wrap"><div class="mini-bar-bg"><div class="mini-bar" style="width:${val}%;background:${color}"></div></div>${val}%</div>`;
+}
+
+function pill(val) {
+  if(val>=50) return '<span class="pill pill-verde">Fuerte</span>';
+  if(val>=25) return '<span class="pill pill-amarillo">En desarrollo</span>';
+  return '<span class="pill pill-rojo">Requiere atención</span>';
+}
+
+function badge(val) {
+  if(val==='Sí') return '<span class="badge badge-si">Sí</span>';
+  if(val==='No') return '<span class="badge badge-no">No</span>';
+  return `<span class="badge badge-sg">${val||'S/D'}</span>`;
+}
+
+function colorCelula(v) {
+  return v>=50?'var(--verde-medio)':v>=25?'var(--dorado)':'var(--naranja)';
+}
+
+function renderTablaL(tbodyId, lideres, clickable, añoParam) {
+  const tbody=document.getElementById(tbodyId);
+  tbody.innerHTML='';
+  lideres.forEach(l=>{
+    const c=colorCelula(l.celula);
+    const tr=document.createElement('tr');
+    if(clickable){ tr.className='clickable-row'; tr.onclick=()=>abrirLider(l.nombre,añoParam); }
+    tr.innerHTML=`<td class="lider-nombre">${l.nombre}</td>
+      <td><strong>${l.ganados}</strong></td>
+      <td>${miniBar(l.llamadas,'var(--verde-medio)')}</td>
+      <td>${miniBar(l.visitas,'var(--dorado)')}</td>
+      <td>${miniBar(l.celula,c)}</td>
+      <td>${pill(l.celula)}</td>`;
+    tbody.appendChild(tr);
   });
 }
 
-function renderTabla(lideres) {
-  const tbody = document.getElementById('tablaBody');
-  tbody.innerHTML = '';
-  lideres.forEach(l => {
-    const color = l.celula >= 50 ? 'var(--verde-medio)' : l.celula >= 25 ? 'var(--dorado)' : 'var(--naranja)';
-    const pill  = l.celula >= 50 ? 'pill-verde' : l.celula >= 25 ? 'pill-amarillo' : 'pill-rojo';
-    const estado = l.celula >= 50 ? 'Fuerte' : l.celula >= 25 ? 'En desarrollo' : 'Requiere atención';
-    tbody.innerHTML += `<tr>
-      <td class="lider-nombre">${l.nombre}</td>
-      <td><strong>${l.ganados}</strong></td>
-      <td><div class="mini-bar-wrap">
-        <div class="mini-bar-bg"><div class="mini-bar" style="width:${l.llamadas}%;background:var(--verde-medio)"></div></div>
-        ${l.llamadas}%
-      </div></td>
-      <td><div class="mini-bar-wrap">
-        <div class="mini-bar-bg"><div class="mini-bar" style="width:${l.visitas}%;background:var(--dorado)"></div></div>
-        ${l.visitas}%
-      </div></td>
-      <td><div class="mini-bar-wrap">
-        <div class="mini-bar-bg"><div class="mini-bar" style="width:${l.celula}%;background:${color}"></div></div>
-        <strong style="color:${color}">${l.celula}%</strong>
-      </div></td>
-      <td><span class="pill ${pill}">${estado}</span></td>
+// ── VISTAS PRINCIPALES ──
+function render2026() {
+  const f=DATOS.filter(d=>getAño(d)===2026);
+  const m=metricas(f);
+  renderKPI('kpi2026',m,'2026');
+  renderEmbudo('embudo26','embudoT26',m,`Embudo 2026 — ${m.total} personas`);
+  renderChart1('chart26',porMes(f),'#2980b9','2026');
+  renderTablaL('tabla26',porLider(f),true,'2026');
+}
+
+function renderHistorico() {
+  const f24=DATOS.filter(d=>getAño(d)===2024);
+  const f25=DATOS.filter(d=>getAño(d)===2025);
+  const m24=metricas(f24), m25=metricas(f25);
+  const l24=porLider(f24), l25=porLider(f25);
+
+  document.getElementById('compGrid').innerHTML=`
+    <div class="comp-card">
+      <h4>Métricas generales</h4>
+      ${[
+        ['Personas ganadas', m24.total, m25.total, false],
+        ['Llamadas %', pct(m24.llamadas,m24.total)+'%', pct(m25.llamadas,m25.total)+'%', false],
+        ['Visitas %', pct(m24.visitas,m24.total)+'%', pct(m25.visitas,m25.total)+'%', false],
+        ['En célula %', pct(m24.celula,m24.total)+'%', pct(m25.celula,m25.total)+'%', false],
+      ].map(([label,v24,v25])=>`
+        <div class="comp-row"><span class="comp-row-label">${label}</span>
+          <div class="comp-row-vals">
+            <span class="comp-val y24">${v24}</span>
+            <span style="color:#ccc;font-size:12px">→</span>
+            <span class="comp-val y25">${v25}</span>
+          </div></div>`).join('')}
+      <div style="font-size:11px;color:var(--gris);margin-top:12px">
+        <span style="color:var(--verde-medio);font-weight:700">■ 2024</span>&nbsp;&nbsp;
+        <span style="color:var(--dorado);font-weight:700">■ 2025</span>
+      </div>
+    </div>
+    <div class="comp-card">
+      <h4>Top 3 líderes 2024 (% célula)</h4>
+      ${l24.slice(0,3).map(l=>`<div class="comp-row"><span class="comp-row-label">${l.nombre}</span><span class="comp-val y24">${l.celula}%</span></div>`).join('')}
+    </div>
+    <div class="comp-card">
+      <h4>Top 3 líderes 2025 (% célula)</h4>
+      ${l25.slice(0,3).map(l=>`<div class="comp-row"><span class="comp-row-label">${l.nombre}</span><span class="comp-val y25">${l.celula}%</span></div>`).join('')}
+    </div>`;
+
+  renderChart2('chartHist',porMes(f24),porMes(f25));
+  renderEmbudo('embudo24','embudoT24',m24,`Embudo 2024 — ${m24.total} personas`);
+  renderEmbudo('embudo25','embudoT25',m25,`Embudo 2025 — ${m25.total} personas`);
+
+  const nombres=[...new Set([...l24.map(l=>l.nombre),...l25.map(l=>l.nombre)])];
+  const tbody=document.getElementById('tablaComp');
+  tbody.innerHTML='';
+  nombres.forEach(nombre=>{
+    const a=l24.find(l=>l.nombre===nombre), b=l25.find(l=>l.nombre===nombre);
+    const diff=(a&&b)?b.celula-a.celula:null;
+    const tend=diff===null?'–':diff>0?`<span style="color:var(--verde-medio)">↑ +${diff}pp</span>`:diff<0?`<span style="color:var(--rojo)">↓ ${diff}pp</span>`:'<span style="color:var(--gris)">= Sin cambio</span>';
+    tbody.innerHTML+=`<tr>
+      <td class="lider-nombre">${nombre}</td>
+      <td>${a?.ganados??'–'}</td><td>${a?a.celula+'%':'–'}</td>
+      <td>${b?.ganados??'–'}</td><td>${b?b.celula+'%':'–'}</td>
+      <td>${tend}</td></tr>`;
+  });
+}
+
+// ── SELECTOR LÍDERES ──
+function renderSelector() {
+  const añoVal=document.getElementById('añoLider').value;
+  const busca=document.getElementById('buscaLider').value.toLowerCase();
+  const filas=añoVal==='todos'?DATOS:DATOS.filter(d=>getAño(d)===parseInt(añoVal));
+  let lideres=porLider(filas);
+  if(busca) lideres=lideres.filter(l=>l.nombre.toLowerCase().includes(busca));
+  renderTablaL('tablaSelector',lideres,true,añoVal);
+}
+
+function abrirLider(nombre, añoParam) {
+  const añoVal=añoParam==='todos'?'todos':parseInt(añoParam);
+  const filas=añoVal==='todos'
+    ?DATOS.filter(f=>f['Líder Principal']===nombre)
+    :DATOS.filter(f=>f['Líder Principal']===nombre&&getAño(f)===añoVal);
+
+  personasActuales=filas;
+  document.getElementById('lNombre').textContent=nombre;
+  document.getElementById('lSub').textContent=añoVal==='todos'?'Todos los años':`Año ${añoVal}`;
+
+  const m=metricas(filas);
+  document.getElementById('lStats').innerHTML=`
+    <div class="lider-stat"><div class="lider-stat-val" style="color:var(--verde)">${m.total}</div><div class="lider-stat-label">Ganados</div></div>
+    <div class="lider-stat"><div class="lider-stat-val" style="color:var(--dorado)">${pct(m.llamadas,m.total)}%</div><div class="lider-stat-label">Llamadas</div></div>
+    <div class="lider-stat"><div class="lider-stat-val" style="color:var(--azul)">${pct(m.visitas,m.total)}%</div><div class="lider-stat-label">Visitas</div></div>
+    <div class="lider-stat"><div class="lider-stat-val" style="color:var(--verde-claro)">${pct(m.celula,m.total)}%</div><div class="lider-stat-label">En célula</div></div>`;
+
+  ['buscaP','fLlamada','fVisita','fCelula'].forEach(id=>{ const el=document.getElementById(id); if(el.tagName==='INPUT') el.value=''; else el.selectedIndex=0; });
+
+  document.getElementById('selectorLider').style.display='none';
+  document.getElementById('detalleL').style.display='block';
+  renderTablaP(filas);
+}
+
+function volverSelector() {
+  document.getElementById('selectorLider').style.display='block';
+  document.getElementById('detalleL').style.display='none';
+}
+
+function renderTablaP(filas) {
+  document.getElementById('pCount').textContent=`${filas.length} persona${filas.length!==1?'s':''}`;
+  const tbody=document.getElementById('tablaP');
+  tbody.innerHTML='';
+  filas.forEach(f=>{
+    tbody.innerHTML+=`<tr>
+      <td><strong>${f['Nombres y apellidos completos']||'–'}</strong></td>
+      <td>${f['Quién te Invito?']||'–'}</td>
+      <td>${getFecha(f)}</td>
+      <td>${f['Tú eres:']||'–'}</td>
+      <td>${f['¿En qué barrio vives?']||'–'}</td>
+      <td>${badge(f['Llamada realizada y contestada (SI/NO)'])}</td>
+      <td>${badge(f['Visita realizada (SI/NO)'])}</td>
+      <td>${badge(f['Ubicado en célula o Grupo Go! (SI/NO)'])}</td>
     </tr>`;
   });
 }
 
-// ── CAMBIAR AÑO ────────────────────────────────────────────
-function cambiarAño(año, btn) {
-  añoActual = año;
-  document.querySelectorAll('.year-tab').forEach(t => t.classList.remove('activo'));
+function filtrarP() {
+  const busca=document.getElementById('buscaP').value.toLowerCase();
+  const fL=document.getElementById('fLlamada').value;
+  const fV=document.getElementById('fVisita').value;
+  const fC=document.getElementById('fCelula').value;
+  let filas=personasActuales;
+  if(busca) filas=filas.filter(f=>(f['Nombres y apellidos completos']||'').toLowerCase().includes(busca)||(f['Quién te Invito?']||'').toLowerCase().includes(busca));
+  if(fL) filas=filas.filter(f=>f['Llamada realizada y contestada (SI/NO)']===fL);
+  if(fV) filas=filas.filter(f=>f['Visita realizada (SI/NO)']===fV);
+  if(fC) filas=filas.filter(f=>f['Ubicado en célula o Grupo Go! (SI/NO)']===fC);
+  renderTablaP(filas);
+}
+
+// ── NAVEGACIÓN ──
+function mostrarVista(vista,btn) {
+  ['vista2026','vistaHistorico','vistaLideres'].forEach(id=>document.getElementById(id).style.display='none');
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('activo'));
   btn.classList.add('activo');
-  renderTodo();
+  const mapa={
+    '2026':['Consolidación <span>2026</span>','vista2026'],
+    'historico':['Histórico <span>2024–2025</span>','vistaHistorico'],
+    'lideres':['Análisis <span>por Líder</span>','vistaLideres'],
+  };
+  const [titulo,id]=mapa[vista];
+  document.getElementById('headerTitulo').innerHTML=titulo;
+  document.getElementById(id).style.display='block';
+  if(vista==='lideres') renderSelector();
 }
 
-function renderTodo() {
-  const filas24 = datosGlobales.filter(f => extraerAño(f['Marca temporal']) === 2024);
-  const filas25 = datosGlobales.filter(f => extraerAño(f['Marca temporal']) === 2025);
-  const m24 = calcularMetricas(filas24);
-  const m25 = calcularMetricas(filas25);
-  const meses24 = calcularPorMes(filas24);
-  const meses25 = calcularPorMes(filas25);
-
-  renderKPIs(m24, m25);
-
-  if (añoActual === 2024) {
-    renderEmbudo(m24, `Embudo 2024 — ${m24.total} personas`);
-    renderTabla(calcularPorLider(filas24));
-  } else if (añoActual === 2025) {
-    renderEmbudo(m25, `Embudo 2025 — ${m25.total} personas`);
-    renderTabla(calcularPorLider(filas25));
-  } else {
-    // Comparar: mostrar 2025 en embudo, tabla con ambos
-    renderEmbudo(m25, 'Embudo 2025 (comparar con 2024 en KPIs)');
-    renderTabla(calcularPorLider([...filas24, ...filas25]));
-  }
-
-  renderChart(meses24, meses25);
-}
-
-// ── INICIO ─────────────────────────────────────────────────
+// ── INIT ──
 async function init() {
-  const errorDiv = document.getElementById('error-msg');
+  const errDiv=document.getElementById('error-msg');
   try {
-    const rows = await cargarDatos();
-    if (rows.length < 2) throw new Error('No se encontraron datos en la hoja.');
-
-    const headers = rows[0];
-    datosGlobales = rows.slice(1).map(r => parsearFila(headers, r));
-
-    document.getElementById('ultima-actualizacion').textContent =
-      new Date().toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' });
-
-    renderTodo();
-
-    const loading = document.getElementById('loading');
-    loading.classList.add('oculto');
-    setTimeout(() => loading.remove(), 600);
-
-  } catch (e) {
+    const rows=await cargarDatos();
+    if(rows.length<2) throw new Error('No se encontraron datos en la hoja.');
+    const headers=rows[0];
+    DATOS=rows.slice(1).map(r=>parsear(headers,r));
+    document.getElementById('ultimaAct').textContent=new Date().toLocaleString('es-CO',{dateStyle:'medium',timeStyle:'short'});
+    render2026();
+    renderHistorico();
+    const L=document.getElementById('loading');
+    L.classList.add('oculto');
+    setTimeout(()=>L.remove(),600);
+  } catch(e) {
     document.getElementById('loading').remove();
-    errorDiv.style.display = 'block';
-    errorDiv.innerHTML = `
-      <strong>⚠️ Error al cargar los datos</strong><br><br>
-      ${e.message}<br><br>
-      <strong>Verifica que:</strong><br>
-      • El SHEET_ID y API_KEY en el código sean correctos<br>
-      • La hoja esté compartida como pública (solo lectura)<br>
-      • El nombre de la pestaña sea exactamente: <code>${SHEET_TAB}</code>
-    `;
+    errDiv.style.display='block';
+    errDiv.innerHTML=`<strong>⚠️ Error al cargar los datos</strong><br><br>${e.message}<br><br>
+      Verifica que el SHEET_ID y API_KEY sean correctos y que la hoja esté pública.`;
   }
 }
-
 init();
 </script>
 </body>
