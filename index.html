@@ -277,7 +277,6 @@ const SHEET_TAB = 'Registro Ganar Reuniones';
 // ============================================================
 
 const MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-const EXCLUIR = ['vine por cuenta propia','no conozco a mi líder','vine de visita','verificando','grupo anexo'];
 
 let DATOS = [];
 let personasActuales = [];
@@ -302,7 +301,6 @@ function getAño(f) {
 function getMes(f) { const p=(f['Marca temporal']||'').split('/'); return p.length===3?parseInt(p[1]):null; }
 function getFecha(f) { const p=(f['Marca temporal']||'').split('/'); return p.length>=3?`${p[0]}/${p[1]}/${p[2].split(' ')[0]}`:'-'; }
 
-function esExcluido(lider) { const l=(lider||'').toLowerCase(); return EXCLUIR.some(e=>l.includes(e)); }
 
 // ── MÉTRICAS ──
 function metricas(filas) {
@@ -318,7 +316,7 @@ function pct(p,t) { return t>0?Math.round(p/t*100):0; }
 
 function porLider(filas) {
   const m={};
-  filas.forEach(f=>{ const l=f['Líder Principal']; if(!l||esExcluido(l)) return; if(!m[l]) m[l]=[]; m[l].push(f); });
+  filas.forEach(f=>{ const l=f['Líder Principal']; if(!l) return; if(!m[l]) m[l]=[]; m[l].push(f); });
   return Object.entries(m).map(([nombre,rows])=>{
     const mt=metricas(rows);
     return { nombre, ganados:mt.total, llamadas:pct(mt.llamadas,mt.total), visitas:pct(mt.visitas,mt.total), celula:pct(mt.celula,mt.total) };
