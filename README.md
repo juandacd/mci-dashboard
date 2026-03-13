@@ -9,10 +9,10 @@ Live data · No backend required · Pure HTML, CSS & JavaScript
 ## Screenshots
 
 ### 2026 — Main View
-![Main Dashboard](Consolidacion MCI.png)
+![Main Dashboard](Consolidacion_MCI.png)
 
 ### Historical 2024–2025
-![Historical View](Consolidacion MCI 3.png)
+![Historical View](Consolidacion_MCI_3.png)
 
 ---
 
